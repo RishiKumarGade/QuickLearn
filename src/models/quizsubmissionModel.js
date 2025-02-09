@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const QuizSubmissionSchema = new mongoose.Schema({
-  mockTestId: { 
+  QuizId: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: "MockTest", 
+    ref: "quizzes", 
     required: true 
   },
   userId: { 
@@ -15,7 +15,7 @@ const QuizSubmissionSchema = new mongoose.Schema({
     String
   ],
   submissionTime: { type: Date, default: Date.now },
-  marks: { type: Number, default: -1 }
+  score: { type: Number, default: -1 }
 });
 
 // MockTestSubmissionSchema.index({ mockTestId: 1, userId: 1 }, { unique: true });

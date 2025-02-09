@@ -152,11 +152,9 @@ const WorkspaceLayout = () => {
           const updatedRoadmap = ws.roadmap.map((module, index) => {
             if (index === currentModule && module.quiz) {
               const totalQuestions = module.quiz.questions?.length || 0;
-              const correctAnswers = module.quiz.answers?.filter((a, i) => a === quizAnswers[i]).length || 0;
+              const correctAnswers = module.quiz.answers?.filter((a, i) => a == quizAnswers[i][0]).length || 0;
               const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
-  
-              console.log(`Score: ${score}`);
-  
+              axios.post('/api/users/submitquiz',{QuizId:module.quiz._id,answers:quizAnswers,score:score})
               return {
                 ...module,
                 quiz: {
@@ -165,8 +163,11 @@ const WorkspaceLayout = () => {
                 },
               };
             }
+
             return module;
           });
+
+
   
           return { ...ws, roadmap: updatedRoadmap };
         }
