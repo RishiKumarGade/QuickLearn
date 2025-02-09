@@ -13,8 +13,6 @@ function page() {
     const getFriendRequests = async () => {
         axios.get('/api/users/getfriendrequests').then(res => {
             setFriendRequests(res.data.friends);
-            console.log(res.data.friends)
-
         })
     }
 
@@ -32,7 +30,8 @@ function page() {
 
     const getInvitations = async () => {
         axios.get('/api/users/getinvitations').then(res => {
-            setFriendRequests(res.data.invitations);
+            setInvitations(res.data.invitations);
+            console.log(res.data)
         })
     }
 
@@ -65,13 +64,13 @@ function page() {
                     {invitations && invitations.length > 0 ? (
                         invitations.map((invitation) => (
                             <div key={invitation._id} className="flex justify-between items-center border-b py-2">
-                                <p>
-                                    <span className="font-medium">{invitation.sender.username}</span> invited you to
-                                    <span className="font-semibold"> {invitation.workspace._title}</span>
-                                </p>
+                                <div>
+                                    <p className="font-medium">{invitation.sender.username}</p> invited you to
+                                    <p className="font-semibold"> {invitation.workspace.title}</p>
+                                </div>
                                 <div className="space-x-2">
-                                    <Button onClick={() => acceptInvitation("WORKSPACE", invitation._id)}>Accept</Button>
-                                    <Button variant="destructive" onClick={() => rejectInvitation(invitation._id, "WORKSPACE")}>
+                                    <Button onClick={() => acceptInvitation("MEMBER", invitation._id)}>Accept</Button>
+                                    <Button variant="destructive" onClick={() => rejectInvitation(invitation._id, "MEMBER")}>
                                         Reject
                                     </Button>
                                 </div>

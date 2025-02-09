@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const MockTestSchema = new Schema({
   title: String,
-  mocktests:{ type: Schema.Types.ObjectId, ref: "WorkSpace" },
+  mocktests:{ type: Schema.Types.ObjectId, ref: "workspaces" },
   questions: [String],
   answers: [String],
 });

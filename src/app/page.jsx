@@ -47,9 +47,9 @@ const WorkspaceLayout = () => {
     })
   }
 
- const  sendWorkspaceInvite = async(e,recieverId,workspaceId)=>{
+ const  sendWorkspaceInvite = async(e,receiverId,workspaceId)=>{
   e.preventDefault();
-  axios.post('/api/users/sendinvite',{type:"MEMBER",recieverId,workspaceId})
+  axios.post('/api/users/sendinvite',{type:"MEMBER",receiverId,workspaceId})
  }
   // Fetch user workspaces
   const getUserWorkSpaces = async () => {
@@ -663,13 +663,13 @@ const WorkspaceLayout = () => {
               <h3>Invite others</h3>
               {friends &&
           friends.map((friend) => {
-            const isMember = currentWorkspace.members.some(
-              (member) => member._id == friend._id
+            const isMember = currentWorkspace?.members?.some(
+              (member) => member._id == friend._id || false
             );
-
+            console.log(friend)
             return (
-              <div key={friend._idid}>
-                {friend._id} {isMember ? "Already A member" : <> 
+              <div key={friend._id}>
+                {friend.username} {isMember ? "Already A member" : <> 
                 <button onClick={(e)=>{sendWorkspaceInvite(e,friend._id,currentWorkspace._id);}} >send invite</button>
                  </>}
               </div>

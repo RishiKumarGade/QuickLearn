@@ -11,7 +11,7 @@ export async function GET(request:NextRequest) {
         const userId = await getDataFromToken(request)
         const friends = await getFriends(userId);
             const response = NextResponse.json({
-                message:'sessions found',
+                message:'friends found',
                 friends: friends,
             })
             return response

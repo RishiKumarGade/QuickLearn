@@ -3,9 +3,9 @@ const Schema = mongoose.Schema;
 
 
 const InvitationSchema = new Schema({
-    workspace: { type: Schema.Types.ObjectId, ref: 'WorkSpace', required: true },
-    sender: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    receiver: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    workspace: { type: Schema.Types.ObjectId, ref: 'workspaces', required: true },
+    sender: { type: Schema.Types.ObjectId, ref: 'users', required: true },
+    receiver: { type: Schema.Types.ObjectId, ref: 'users', required: true },
     status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
     createdAt: { type: Date, default: Date.now }
   });
