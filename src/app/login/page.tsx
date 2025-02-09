@@ -93,7 +93,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full flex items-center justify-center space-x-2"
             >
-              {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Login"}
+              {/* {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Login"} */}
             </Button> 
           </form>
           <p className="text-center text-sm mt-4">
