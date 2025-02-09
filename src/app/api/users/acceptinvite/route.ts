@@ -13,11 +13,10 @@ export async function POST(request:NextRequest) {
     try {
         const reqBody = await request.json();
         const { type,invitationId } = reqBody;
-        
         if(type == "FRIEND"){
-            acceptFriendRequest(invitationId);
-        }else if(type=="MEMEBER"){
-            acceptWorkspaceInvite(invitationId);
+            await acceptFriendRequest(invitationId);
+        }else if(type=="MEMBER"){
+           await acceptWorkspaceInvite(invitationId);
         }
         const response = NextResponse.json({
             message:'invite accepted',

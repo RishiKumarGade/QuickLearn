@@ -43,13 +43,13 @@ function page() {
     }, [])
 
     const acceptInvitation = async (type, invitationId) => {
-        await axios.post('/api/users/acceptinvitation', { invitationId, type }).then((res) => {
+        await axios.post('/api/users/acceptinvite', { invitationId, type }).then((res) => {
             console.log(res)
         })
 
     }
     const rejectInvitation = async (invitationId, type) => {
-        await axios.post('/api/users/rejectinvitation', { invitationId, type }).then((res) => {
+        await axios.post('/api/users/rejectinvite', { invitationId, type }).then((res) => {
             console.log(res)
         })
     }
