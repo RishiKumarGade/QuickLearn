@@ -10,11 +10,12 @@ connect()
 export async function POST(request:NextRequest) {
     try {
         const reqBody = await request.json();
-        const { type,userId } = reqBody;
+        const { type,receiverId,workspaceId } = reqBody;
+       const userId = await getDataFromToken(request)
         if (type == "FRIEND"){
-            await sendFriendRequest(userId);
+            await sendFriendRequest(userId,receiverId);
         }else if (type == "MEMBER"){
-            await sendWorkspaceInvite(userId);
+            await sendWorkspaceInvite(workspaceId,userId,receiverId);
         }
             const response = NextResponse.json({
                 message:'sent',

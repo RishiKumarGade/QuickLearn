@@ -22,6 +22,7 @@ const WorkspaceLayout = () => {
   const [showRightPanel, setShowRightPanel] = useState(false);
   const [openSections, setOpenSections] = useState([]);
   const [workspaces, setWorkSpaces] = useState([]);
+  const [friends, setFriends] = useState([]);
   const router = useRouter()
   const [currentModule, setCurrentModule] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -37,8 +38,19 @@ const WorkspaceLayout = () => {
 
   useEffect(() => {
     getUserWorkSpaces();
+    getFriends();
   }, []);
 
+  const getFriends = async ()=>{
+    axios.get('/api/users/getfriends').then((res)=>{
+      setFriends(res.data.friends);
+    })
+  }
+
+ const  sendWorkspaceInvite = async(e,recieverId,workspaceId)=>{
+  e.preventDefault();
+  axios.post('/api/users/sendinvite',{type:"MEMBER",recieverId,workspaceId})
+ }
   // Fetch user workspaces
   const getUserWorkSpaces = async () => {
     setIsLoading(true);
@@ -112,7 +124,7 @@ const WorkspaceLayout = () => {
       });
       setWorkSpaces((prev) => [...prev, res.data]);
       setSelectedWorkspaceId(res.data._id);
-      router.refresh();
+      window.location.reload();
     } catch (error) {
       console.error("Error creating workspace:", error);
     } finally {
@@ -645,6 +657,23 @@ const WorkspaceLayout = () => {
                 <Target size={14} className="text-blue-400" />
                 {currentWorkspace.progress}% Complete
               </p>
+            </div>
+            <div>
+              <h3>Invite others</h3>
+              {friends &&
+          friends.map((friend) => {
+            const isMember = currentWorkspace.members.some(
+              (member) => member._id == friend._id
+            );
+
+            return (
+              <div key={friend._idid}>
+                {friend._id} {isMember ? "Already A member" : <> 
+                <button onClick={(e)=>{sendWorkspaceInvite(e,friend._id,currentWorkspace._id);}} >send invite</button>
+                 </>}
+              </div>
+            );
+          })}
             </div>
           </div>
         </div>

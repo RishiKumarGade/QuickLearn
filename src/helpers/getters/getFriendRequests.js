@@ -1,6 +1,9 @@
+import User from '@/models/userModel';
 import FriendRequest from '@/models/friendrequestModel.js'
 
 
-  export default getFriendRequests = async (userId) => {
+const getFriendRequests = async (userId) => {
     return FriendRequest.find({ receiver:userId}).populate('sender')
   };
+
+  export default getFriendRequests;
