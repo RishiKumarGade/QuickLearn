@@ -9,6 +9,8 @@ import "@/cssFiles/homeanimations.css";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Loader2 } from "lucide-react";
 
 
 export default function SignupPage() {
@@ -76,79 +78,60 @@ export default function SignupPage() {
 
   return (
     <>
-      <h1 className="text-3xl mt-5 font-semibold">
-        {loading ? "processing" : "Create new Account"}
-      </h1>
-      <form className="mt-6 text-left">
-        <div className="mb-2">
-          <label className="block text-sm font-semibold ">
-            UserName
-          </label>
-          <Input
-            value={user.username}
-            onChange={(e) => setUser({ ...user, username: e.target.value })}
-            type="text"
-            className="w-40"
-          />
-        </div>
-        <div className="mb-2">
-          <label className="block text-sm font-semibold ">
-            Email
-          </label>
-          <Input
-            value={user.email}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
-            type="email"
-            className="w-40"
-          />
-        </div>
-        <div className="mb-2">
-          <label className="block text-sm font-semibold ">
-            Password
-          </label>
-          <Input
-            id="password"
-            value={user.password}
-            onChange={(e) => setUser({ ...user, password: e.target.value })}
-            type="password"
-            className="w-40"
-          />
-        </div>
-        <p className="">
-          <Link
-            href="/forgotpassword"
-            className=" font-semibold hover:underline mr-4"
-          >
-            Forgot password?
-          </Link>
-          <label htmlFor="remember" className=" font-semibold">
-            <input type="checkbox" id="remember" className="mr-1" />
-            Remember me
-          </label>
-        </p>
-        <div className="mt-6">
-          <Button
-            variant="codeeditor"
-            onClick={(e) => {
-              e.preventDefault();
-              onSignup();
-            }}
-          >
-            {buttonDisabled ? "Fill the details" : "signup"}
-          </Button>
-        </div>
-      </form>
-      <p>
-        {" "}
-        Already have an account?{" "}
-        <Link
-          href="/login"
-          className='" font-semibold hover:underline'
-        >
-          Login!
-        </Link>
-      </p>
-
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 p-4">
+      <Card className="w-full max-w-md shadow-xl rounded-2xl bg-white p-8">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-extrabold text-gray-800">Welcome Back</CardTitle>
+          <p className="text-gray-500">Sign in to continue</p>
+        </CardHeader>
+        <CardContent>
+          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <Input
+                value={user.email}
+                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                type="email"
+                placeholder="Enter your email"
+                className="mt-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <Input
+                value={user.password}
+                onChange={(e) => setUser({ ...user, password: e.target.value })}
+                type="password"
+                placeholder="Enter your password"
+                className="mt-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <label className="flex items-center space-x-2">
+                <input type="checkbox" className="form-checkbox accent-blue-500" />
+                <span>Remember me</span>
+              </label>
+              <Link href="/forgotpassword" className="text-blue-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+            <Button
+              onClick={onLogin}
+              disabled={loading}
+              className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold shadow-md"
+            >
+              {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Login"}
+            </Button>
+          </form>
+          <p className="text-center text-sm mt-5">
+            Don't have an account?
+            <Link href="/signup" className="text-blue-600 hover:underline ml-1 font-semibold">
+              Sign up!
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    </div>
     </>
   );
 }

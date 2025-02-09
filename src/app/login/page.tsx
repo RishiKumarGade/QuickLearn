@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import "@/cssFiles/homeanimations.css";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -49,66 +51,60 @@ export default function LoginPage() {
   };
   return (
     <>
-      <h1 className="text-3xl font-semibold text-center">
-        {loading ? "processing" : "LogIn"}
-      </h1>
-      <h1 className="text-xl text-center mt-5">
-        {loading ? "processing" : "Sign in to continue"}
-      </h1>
-      <form className="mt-6 flex flex-col justify-center items-center">
-        <div className="mb-2">
-          <label className="block text-sm font-semibold text-left ">
-            Email
-          </label>
-          <Input
-            value={user.email}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
-            type="email"
-            className="w-40"
-          />
-        </div>
-        <div className="mb-2">
-          <label className="block text-sm font-semibold text-left ">
-            Password
-          </label>
-          <Input
-            value={user.password}
-            onChange={(e) => setUser({ ...user, password: e.target.value })}
-            type="password"
-            className="w-40"
-          />
-        </div>
-        <p className="remember-forgot-link flex text-sm justify-between my-4">
-          <Link
-            href="/forgotpassword"
-            className=" font-semibold hover:underline mr-4"
-          >
-            Forgot password?
-          </Link>
-          <label htmlFor="remember" className=" font-semibold">
-            <input type="checkbox" id="remember" className="mr-1" />
-            Remember me
-          </label>
-        </p>
-        <div className="mt-6">
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              onLogin();
-            }}
-            variant="codeeditor"
-          >
-            Login
-          </Button>
-        </div>
-      </form>
-      <p className="register-link text-sm text-center my-4">
-        {" "}
-        Don't have an account?{" "}
-        <Link href="/signup" className='" font-semibold hover:underline'>
-          SignUp!
-        </Link>
-      </p>
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <Card className="w-full max-w-md shadow-lg rounded-xl bg-white">
+        <CardHeader>
+          <CardTitle className="text-center text-3xl font-bold">Log In</CardTitle>
+          <p className="text-center text-gray-500">Sign in to continue</p>
+        </CardHeader>
+        <CardContent>
+          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <Input
+                value={user.email}
+                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                type="email"
+                placeholder="Enter your email"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <Input
+                value={user.password}
+                onChange={(e) => setUser({ ...user, password: e.target.value })}
+                type="password"
+                placeholder="Enter your password"
+                className="mt-1"
+              />
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <label className="flex items-center space-x-2">
+                <input type="checkbox" className="form-checkbox" />
+                <span>Remember me</span>
+              </label>
+              <Link href="/forgotpassword" className="text-blue-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+             <Button
+              onClick={onLogin}
+              disabled={loading}
+              className="w-full flex items-center justify-center space-x-2"
+            >
+              {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Login"}
+            </Button> 
+          </form>
+          <p className="text-center text-sm mt-4">
+            Don't have an account?
+            <Link href="/signup" className="text-blue-600 hover:underline ml-1">
+              Sign up!
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    </div>
     </>
   );
 }
