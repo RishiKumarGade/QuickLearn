@@ -8,8 +8,8 @@ const RoadmapSchema = new Schema({
     {
       title: String,
       slides: [String],
-      quiz: { type: Schema.Types.ObjectId, ref: "Quiz"},
-      isCompleted: {type:Boolean,default: false}
+      quiz: { type: Schema.Types.ObjectId, ref: "quizzes"},
+      isCompleted: {type:Boolean,default: false}  
     },
   ],
 });

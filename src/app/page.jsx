@@ -33,7 +33,6 @@ const WorkspaceLayout = () => {
   const [workspacePrompt, setWorkspacePrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isWorkSpaceLoading, setIsWorkSpaceLoading] = useState(false);
-
   // Derive current workspace from workspaces array
   const currentWorkspace = workspaces.find((ws) => ws._id === selectedWorkspaceId);
 
@@ -41,6 +40,20 @@ const WorkspaceLayout = () => {
     getUserWorkSpaces();
     getFriends();
   }, []);
+
+
+
+  const getQuizData = async (QuizId) => {
+    try {
+      const response = await axios.post("/api/users/getquizdata", { QuizId });
+      return response.data.quizdata;
+    } catch (error) {
+      console.error("Error fetching quiz data:", error);
+      return null;
+    }
+  };
+  
+
 
   const getFriends = async ()=>{
     axios.get('/api/users/getfriends').then((res)=>{
@@ -74,28 +87,58 @@ const WorkspaceLayout = () => {
   const getRoadMapData = async () => {
     try {
       setIsWorkSpaceLoading(true);
+      console.log("Getting")
       const res = await axios.post("/api/users/getworkspacedata", {
         workspaceId: selectedWorkspaceId,
       });
-
+      
       if (!res.data?.roadmap?.learningModule) {
         console.error("Invalid response format:", res.data);
         return;
       }
-
-      setWorkSpaces((prev) =>
-        prev.map((ws) =>
-          ws._id === selectedWorkspaceId
-            ? { ...ws, roadmap: res.data.roadmap.learningModule }
-            : ws
-        )
+  
+      // Update the roadmap for the selected workspace
+      let newWorkspaces = workspaces.map((ws) =>
+        ws._id === selectedWorkspaceId
+          ? { ...ws, roadmap: res.data.roadmap.learningModule }
+          : ws
       );
+  
+      // Fetch quiz data for each learning module
+      const updatedWorkspaces = await Promise.all(
+        newWorkspaces.map(async (ws) => {
+          if (ws._id === selectedWorkspaceId) {
+            const updatedRoadmap = await Promise.all(
+              ws.roadmap.map(async (module) => {
+                try {
+                  const quiz = await getQuizData(module.quiz._id);
+                  return {
+                    ...module,
+                    quiz: {
+                      ...module.quiz,
+                      isCompleted: quiz?.score >= 75 || false,
+                    },
+                  };
+                } catch (err) {
+                  console.error("Error fetching quiz data:", err);
+                  return module; // Return the original module if quiz fetch fails
+                }
+              })
+            );
+            return { ...ws, roadmap: updatedRoadmap };
+          }
+          return ws;
+        })
+      );
+  
+      setWorkSpaces(updatedWorkspaces);
     } catch (error) {
       console.error("Error fetching roadmap data:", error);
     } finally {
       setIsWorkSpaceLoading(false);
     }
   };
+  
 
   // Fetch workspace members
   const getWorkSpaceMembers = async () => {
@@ -106,7 +149,7 @@ const WorkspaceLayout = () => {
       setWorkSpaces((prev) =>
         prev.map((ws) =>
           ws._id === selectedWorkspaceId
-            ? { ...ws, members: res.data.members }
+            ? { ...ws, members: res.data.workspacemembers }
             : ws
         )
       );
@@ -153,7 +196,7 @@ const WorkspaceLayout = () => {
           const updatedRoadmap = ws.roadmap.map((module, index) => {
             if (index === currentModule && module.quiz) {
               const totalQuestions = module.quiz.questions?.length || 0;
-              const correctAnswers = module.quiz.answers?.filter((a, i) => a == quizAnswers[i][0]).length || 0;
+              const correctAnswers = module.quiz.answers?.filter((a, i) => a == quizAnswers[i]).length || 0;
               const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
               axios.post('/api/users/submitquiz',{QuizId:module.quiz._id,answers:quizAnswers,score:score})
               return {
@@ -224,9 +267,11 @@ const WorkspaceLayout = () => {
       if (workspace && (!workspace.members || workspace.members.length === 0)) {
         getWorkSpaceMembers();
       }
+     
     }
   }, [selectedWorkspaceId]);
 
+  
 
   return (
     <>
@@ -507,7 +552,7 @@ const WorkspaceLayout = () => {
                                                                 onChange={() =>
                                                                   setQuizAnswers({
                                                                     ...quizAnswers,
-                                                                    [qIndex]: choice,
+                                                                    [qIndex]: choice[0],
                                                                   })
                                                                 }
                                                                 disabled={
@@ -667,7 +712,7 @@ const WorkspaceLayout = () => {
                       className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center gap-2"
                     >
                       <Users size={14} className="text-blue-400" />
-                      {member}
+                      {member.user.username}
                     </div>
                   ))}
                 </div>
@@ -690,13 +735,16 @@ const WorkspaceLayout = () => {
                 <h3>Invite others</h3>
                 {friends &&
             friends.map((friend) => {
-              const isMember = currentWorkspace.members.some(
-                (member) => member._id == friend._id
+              console.log(currentWorkspace.members)
+              console.log(friend)
+              const isMember = currentWorkspace?.members?.some(
+                (member) => member.user._id == friend._id || currentWorkspace.ownerId == friend._id
               );
 
               return (
-                <div key={friend._idid}>
-                  {friend._id} {isMember ? "Already A member" : <> 
+                <div key={friend._id}>
+                  {friend.username} 
+                  {isMember ? "  Already A member" : <> 
                   <button onClick={(e)=>{sendWorkspaceInvite(e,friend._id,currentWorkspace._id);}} >send invite</button>
                   </>}
                 </div>

@@ -20,6 +20,6 @@ const QuizSubmissionSchema = new mongoose.Schema({
 
 // MockTestSubmissionSchema.index({ mockTestId: 1, userId: 1 }, { unique: true });
 
-const QuizSubmission = mongoose.model("quizsubmissions", QuizSubmissionSchema);
+const QuizSubmission = mongoose.models.quizsubmissions || mongoose.model("quizsubmissions", QuizSubmissionSchema);
 
 module.exports = QuizSubmission;
