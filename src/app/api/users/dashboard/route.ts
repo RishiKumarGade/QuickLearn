@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from '@/models/userModel';
+import Quiz from '@/models/quizModel'; // Ensure this is the correct path
 import WorkSpace from '@/models/workspaceModel';
 import QuizSubmission from '@/models/quizsubmissionModel';
 import Friend from '@/models/friendModel';
@@ -13,7 +14,7 @@ connect();
 export async function GET(request: NextRequest) {
   try {
     const userId = await getDataFromToken(request);
-
+    console.log(mongoose.modelNames());
     const userObjectId = new mongoose.Types.ObjectId(userId);
 
     const workspaces = await WorkSpace.find({ ownerId: userObjectId });
@@ -24,32 +25,37 @@ export async function GET(request: NextRequest) {
         model: 'quizzes'
       });
 
-    const workspaceProgress = await Promise.all(workspaces.map(async (ws) => {
-      const roadmap = roadmaps.find((rm) => rm.workspaceId.equals(ws._id));
-      if (!roadmap) {
+      const workspaceProgress = await Promise.all(workspaces.map(async (ws) => {
+        const roadmap = roadmaps.find((rm) => rm.workspaceId.equals(ws._id));
+        if (!roadmap) {
+          return {
+            name: ws.title,
+            total: 0,
+            completed: 0,
+            progress: 0 // Ensures consistency
+          };
+        }
+      
+        const quizIds = roadmap.learningModule.map(mod => mod.quiz?._id).filter(Boolean);
+      
+        const submissions = await QuizSubmission.find({
+          userId: userObjectId,
+          QuizId: { $in: quizIds },
+          score: { $gte: 75 }
+        });
+      
+        const total = quizIds.length;
+        const completed = submissions.length;
+        const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
         return {
           name: ws.title,
-          total: 0,
-          completed: 0
+          total,
+          completed,
+          progress
         };
-      }
-
-      // Get the list of quiz IDs within the learning modules
-      const quizIds = roadmap.learningModule.map(mod => mod.quiz?._id).filter(Boolean);
-
-      // Find completed submissions
-      const submissions = await QuizSubmission.find({
-        userId: userObjectId,
-        QuizId: { $in: quizIds }, // Ensure correct field name (QuizId, not quizId)
-        score: { $gte: 75 }
-      });
-
-      return {
-        name: ws.title,
-        total: quizIds.length,
-        completed: submissions.length
-      };
-    }));
+      }));
+      
 
     // Get friends
     const friends = await Friend.find({
@@ -79,7 +85,7 @@ export async function GET(request: NextRequest) {
       const workspaceTitle = roadmap?.workspaceId?.title || 'Unknown';
 
       return {
-        type: 'Quiz',
+        type: 'quizzes',
         workspace: workspaceTitle,
         score: sub.score,
         date: sub.submissionTime,
